@@ -1,10 +1,14 @@
 document.addEventListener("DOMContentLoaded", function () {
-  let contacts = [];
+  
+    var contacts = [];
+  
+    if (localStorage.getItem("contacts")) {
+      contacts.push(JSON.parse(localStorage.getItem("contacts")));
+      console.log(contacts);
+      renderizarTabla();
+    }
 
-  if (localStorage.getItem("contacts")) {
-    contacts.push(JSON.parse(localStorage.getItem("contacts")));
-    renderizarTabla();
-  }
+
 
   function agregarContacto() {
     let $nombre = document.getElementById("name").value;
@@ -20,8 +24,8 @@ document.addEventListener("DOMContentLoaded", function () {
     contacts.push(contacto);
 
     localStorage.setItem("contacts", JSON.stringify(contacto));
-    renderizarTabla();
     document.getElementById("formContact").reset();
+    renderizarTabla();
   }
 
   function searchId() {
@@ -34,14 +38,20 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log(filterSearch);
         }
         });
-    return filterSearch ? filterSearch.id : null;
+    return filterSearch ? filterSearch.id : console.log("No se ha seleccionado un contacto");
 }
 
-  function eliminarTr() {
-    let resultado = searchId();
-    localStorage.removeItem(contacts, resultado);
-    renderizarTabla();
+function eliminarLocal() {
+  let resultado = searchId();
+  if (resultado !== null && resultado >= 0 && resultado < contacts.length) {
+      contacts.splice(resultado, 1);
+      localStorage.setItem("contacts", JSON.stringify(contacts));
+      renderizarTabla();
+  } else {
+      console.log("ID no válido");
   }
+}
+
   function editarLS() {
     let resultado = searchId();
   }
@@ -64,6 +74,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
   document.getElementById("btnAgregar").addEventListener("click", agregarContacto);
-  document.getElementById("btnEliminarTr").addEventListener("click", eliminarTr);
+  document.getElementById("btnEliminarL").addEventListener("click", eliminarLocal);
   document.getElementById("btnEditarTr").addEventListener("click", editarLS);
 });
