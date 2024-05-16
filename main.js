@@ -1,43 +1,69 @@
-document.addEventListener("DOMContentLoaded", function() {
-    let contacts = [];
+document.addEventListener("DOMContentLoaded", function () {
+  let contacts = [];
 
-    console.log(localStorage.getItem('constacts'));
-    if (localStorage.getItem('contacts')) {
-        contacts.push(JSON.parse(localStorage.getItem('contacts')));
-        renderizarTabla();
-    }
-    function agregarContacto() {
+  if (localStorage.getItem("contacts")) {
+    contacts.push(JSON.parse(localStorage.getItem("contacts")));
+    renderizarTabla();
+  }
 
-        let $nombre = document.getElementById("name").value;
-        let $mail = document.getElementById("mail").value;
-        let $nacimiento = document.getElementById("birthdate").value;
+  function agregarContacto() {
+    let $nombre = document.getElementById("name").value;
+    let $mail = document.getElementById("mail").value;
+    let $nacimiento = document.getElementById("birthdate").value;
 
-        let contacto = {
-            nombre: $nombre,
-            mail: $mail,
-            nacimiento: $nacimiento
-        };
+    let contacto = {
+      nombre: $nombre,
+      mail: $mail,
+      nacimiento: $nacimiento,
+    };
 
-        contacts.push(contacto);
+    contacts.push(contacto);
 
-        localStorage.setItem('contacts', JSON.stringify(contacto));
-        renderizarTabla();
-        document.getElementById("formContact").reset()
-    }
+    localStorage.setItem("contacts", JSON.stringify(contacto));
+    renderizarTabla();
+    document.getElementById("formContact").reset();
+  }
 
-    function renderizarTabla() {
-        let tbody = document.getElementById("tbodyContact");
-        tbody.innerHTML = "";
+  function searchId() {
+    const searchQuery = document.querySelectorAll('input[name="contact"]');
+    let filterSearch = null;
 
-        contacts.forEach(function(contacto) {
-            let row = document.createElement("tr");
-            row.innerHTML = `
+        searchQuery.forEach((tr) => {
+        if (tr.checked) {
+            filterSearch = tr;
+            console.log(filterSearch);
+        }
+        });
+    return filterSearch ? filterSearch.id : null;
+}
+
+  function eliminarTr() {
+    let resultado = searchId();
+    localStorage.removeItem(contacts, resultado);
+    renderizarTabla();
+  }
+  function editarLS() {
+    let resultado = searchId();
+  }
+
+  function renderizarTabla() {
+    let tbody = document.getElementById("tbodyContact");
+    tbody.innerHTML = "";
+
+    contacts.forEach(function (contacto, index) {
+      let row = document.createElement("tr");
+      let vIndex = index;
+      row.setAttribute("id", vIndex);
+      row.innerHTML =`
+                <td><input name="contact" type="radio" id="${vIndex}"></td>
                 <td>${contacto.nombre}</td>
                 <td>${contacto.mail}</td>
                 <td>${contacto.nacimiento}</td>
             `;
-            tbody.appendChild(row);
-        });
-    }
-    document.getElementById("btnAgregar").addEventListener("click", agregarContacto);
+      tbody.appendChild(row);
+    });
+  }
+  document.getElementById("btnAgregar").addEventListener("click", agregarContacto);
+  document.getElementById("btnEliminarTr").addEventListener("click", eliminarTr);
+  document.getElementById("btnEditarTr").addEventListener("click", editarLS);
 });
